@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CameronCodesStuff — Dev Dashboard</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23080c14'/><circle cx='16' cy='16' r='7' fill='none' stroke='%232dd4bf' stroke-width='2'/><circle cx='16' cy='16' r='3' fill='%232dd4bf'/></svg>" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
@@ -13,26 +14,7 @@
   <canvas id="bg-canvas"></canvas>
   <div class="scanlines"></div>
 
-  <div id="token-screen" class="token-screen">
-    <div class="token-box">
-      <div class="token-eye">// setup</div>
-      <h2 class="token-title">GitHub Token</h2>
-      <p class="token-desc">Paste your personal access token to unlock the dashboard. It stays in your browser and is never sent anywhere except GitHub's API.</p>
-      <div class="token-input-row">
-        <input id="token-input" type="password" placeholder="ghp_..." spellcheck="false" autocomplete="off" />
-        <button id="token-toggle" class="icon-btn" title="Show/hide token">
-          <svg id="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-        </button>
-      </div>
-      <div class="token-actions">
-        <button id="token-submit" class="primary-btn">Launch Dashboard</button>
-        <button id="token-skip" class="ghost-btn">Skip (60 req/hr limit)</button>
-      </div>
-      <p class="token-hint">Generate one at GitHub → Settings → Developer settings → Personal access tokens. <code>public_repo</code> read scope is enough.</p>
-    </div>
-  </div>
-
-  <div id="dashboard" class="layout" style="display:none">
+  <div class="layout">
 
     <header class="hero">
       <div class="hero-left">
@@ -55,7 +37,6 @@
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
           Refresh
         </button>
-        <button class="ghost-btn-sm" onclick="window.dashboard.resetToken()">Change token</button>
         <div class="tick-wrap">
           <svg class="tick-ring" viewBox="0 0 36 36">
             <circle cx="18" cy="18" r="15" fill="none" stroke-width="2" stroke="rgba(255,255,255,.05)"/>
@@ -74,13 +55,13 @@
       <div class="stat-card"><div class="stat-num" id="s-repos">—</div><div class="stat-label">repos</div></div>
       <div class="stat-card"><div class="stat-num" id="s-stars">—</div><div class="stat-label">stars</div></div>
       <div class="stat-card"><div class="stat-num" id="s-followers">—</div><div class="stat-label">followers</div></div>
-      <div class="stat-card"><div class="stat-num" id="s-streak">—</div><div class="stat-label">day streak</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-following">—</div><div class="stat-label">following</div></div>
       <div class="stat-card"><div class="stat-num" id="s-today">—</div><div class="stat-label">pushed today</div></div>
       <div class="stat-card"><div class="stat-num" id="s-langs">—</div><div class="stat-label">languages</div></div>
     </section>
 
     <section class="badges-section">
-      <img src="https://github-readme-activity-graph.vercel.app/graph?username=CameronCodesStuff&theme=react-dark&hide_border=true&area=true&custom_title=Contribution+Flow&bg_color=080c14&color=2dd4bf&line=a78bfa&point=60a5fa" alt="Activity graph" class="badge-img badge-wide" />
+      <img src="https://github-readme-activity-graph.vercel.app/graph?username=CameronCodesStuff&theme=react-dark&hide_border=true&area=true&custom_title=Contribution+Flow&bg_color=080c14&color=2dd4bf&line=a78bfa&point=60a5fa" alt="Activity graph" class="badge-img" />
       <div class="badges-row">
         <img src="https://github-readme-stats.vercel.app/api?username=CameronCodesStuff&show_icons=true&theme=react&hide_border=true&bg_color=080c14&title_color=2dd4bf&icon_color=a78bfa&text_color=94a3b8&ring_color=2dd4bf" alt="GitHub stats" class="badge-img" />
         <img src="https://github-readme-streak-stats.herokuapp.com?user=CameronCodesStuff&theme=react&hide_border=true&background=080c14&ring=2dd4bf&fire=fb923c&currStreakLabel=2dd4bf&sideLabels=94a3b8&dates=475569&currStreakNum=ffffff&sideNums=ffffff" alt="Streak stats" class="badge-img" />

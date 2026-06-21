@@ -1,5 +1,6 @@
 const CONFIG = {
   username: 'CameronCodesStuff',
+  token: 'YOUR_GITHUB_TOKEN_HERE',
   refreshInterval: 60,
   repoLimit: 30,
   commitFetchLimit: 12,
@@ -13,7 +14,6 @@ const LANG_COLORS = {
 };
 
 let state = {
-  token: '',
   repos: [],
   activeFilter: 'all',
   prevPushed: {},
@@ -26,7 +26,9 @@ const $ = id => document.getElementById(id);
 
 function ghHeaders() {
   const h = { Accept: 'application/vnd.github+json' };
-  if (state.token) h['Authorization'] = 'Bearer ' + state.token;
+  if (CONFIG.token && CONFIG.token !== 'YOUR_GITHUB_TOKEN_HERE') {
+    h['Authorization'] = 'Bearer ' + CONFIG.token;
+  }
   return h;
 }
 
@@ -159,7 +161,6 @@ async function load() {
 
     if (!userRes.ok || !reposRes.ok) {
       const status = !userRes.ok ? userRes.status : reposRes.status;
-      if (status === 401) throw new Error('Invalid token — check it and try again.');
       throw new Error('GitHub API error ' + status);
     }
 
@@ -172,12 +173,12 @@ async function load() {
 
     const langs = new Set(repos.map(r => r.language).filter(Boolean));
     const today = new Date().toISOString().slice(0, 10);
-    const pushedToday = repos.filter(r => (r.pushed_at || '').slice(0, 10) === today).length;
 
     $('s-repos').textContent = user.public_repos;
     $('s-stars').textContent = repos.reduce((s, r) => s + r.stargazers_count, 0);
     $('s-followers').textContent = user.followers;
-    $('s-today').textContent = pushedToday;
+    $('s-following').textContent = user.following;
+    $('s-today').textContent = repos.filter(r => (r.pushed_at || '').slice(0, 10) === today).length;
     $('s-langs').textContent = langs.size;
 
     const topRepos = repos.slice(0, CONFIG.commitFetchLimit);
@@ -202,57 +203,6 @@ async function load() {
     setStatus('error', 'error');
     startTimer();
   }
-}
-
-async function fetchStreak() {
-  try {
-    const r = await fetch(`https://streak-stats.demolab.com/?user=${CONFIG.username}&format=json`);
-    if (!r.ok) return;
-    const d = await r.json();
-    if (d.currentStreak?.length !== undefined) $('s-streak').textContent = d.currentStreak.length;
-  } catch {}
-}
-
-function showDashboard() {
-  $('token-screen').style.display = 'none';
-  $('dashboard').style.display = 'block';
-  load();
-  fetchStreak();
-}
-
-function initTokenScreen() {
-  const input = $('token-input');
-  const toggle = $('token-toggle');
-  const submit = $('token-submit');
-  const skip = $('token-skip');
-
-  const saved = sessionStorage.getItem('gh_token');
-  if (saved) {
-    state.token = saved;
-    showDashboard();
-    return;
-  }
-
-  toggle.addEventListener('click', () => {
-    input.type = input.type === 'password' ? 'text' : 'password';
-  });
-
-  input.addEventListener('keydown', e => {
-    if (e.key === 'Enter') submit.click();
-  });
-
-  submit.addEventListener('click', () => {
-    const val = input.value.trim();
-    if (!val) { input.focus(); return; }
-    state.token = val;
-    sessionStorage.setItem('gh_token', val);
-    showDashboard();
-  });
-
-  skip.addEventListener('click', () => {
-    state.token = '';
-    showDashboard();
-  });
 }
 
 function initCanvas() {
@@ -297,14 +247,7 @@ function initCanvas() {
 
 window.dashboard = {
   refresh: () => { clearInterval(state.timerTick); load(); },
-  resetToken: () => {
-    sessionStorage.removeItem('gh_token');
-    clearInterval(state.timerTick);
-    $('token-input').value = '';
-    $('token-screen').style.display = 'flex';
-    $('dashboard').style.display = 'none';
-  },
 };
 
 initCanvas();
-initTokenScreen();
+load();
