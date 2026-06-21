@@ -1,6 +1,6 @@
 const CONFIG = {
   username: 'CameronCodesStuff',
-  token: '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',
+  worker: 'https://YOUR_WORKER_NAME.YOUR_SUBDOMAIN.workers.dev',
   refreshInterval: 60,
   repoLimit: 30,
   commitFetchLimit: 12,
@@ -24,12 +24,10 @@ let state = {
 
 const $ = id => document.getElementById(id);
 
-function ghHeaders() {
-  const h = { Accept: 'application/vnd.github+json' };
-  if (CONFIG.token && CONFIG.token !== 'YOUR_GITHUB_TOKEN_HERE') {
-    h['Authorization'] = 'Bearer ' + CONFIG.token;
-  }
-  return h;
+function api(path) {
+  return fetch(CONFIG.worker + path, {
+    headers: { Accept: 'application/vnd.github+json' },
+  });
 }
 
 function timeAgo(iso) {
@@ -63,7 +61,7 @@ function startTimer() {
 
 async function fetchCommit(repo) {
   try {
-    const r = await fetch(`https://api.github.com/repos/${CONFIG.username}/${repo}/commits?per_page=1`, { headers: ghHeaders() });
+    const r = await api(`/repos/${CONFIG.username}/${repo}/commits?per_page=1`);
     if (!r.ok) return null;
     const d = await r.json();
     return d[0]?.commit?.message?.split('\n')[0] || null;
@@ -155,13 +153,13 @@ async function load() {
   setStatus('loading', 'fetching…');
   try {
     const [userRes, reposRes] = await Promise.all([
-      fetch(`https://api.github.com/users/${CONFIG.username}`, { headers: ghHeaders() }),
-      fetch(`https://api.github.com/users/${CONFIG.username}/repos?sort=updated&per_page=${CONFIG.repoLimit}&type=owner`, { headers: ghHeaders() }),
+      api(`/users/${CONFIG.username}`),
+      api(`/users/${CONFIG.username}/repos?sort=updated&per_page=${CONFIG.repoLimit}&type=owner`),
     ]);
 
     if (!userRes.ok || !reposRes.ok) {
       const status = !userRes.ok ? userRes.status : reposRes.status;
-      throw new Error('GitHub API error ' + status);
+      throw new Error('API error ' + status);
     }
 
     const user = await userRes.json();
