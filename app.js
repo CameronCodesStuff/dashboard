@@ -1,6 +1,6 @@
 const CONFIG = {
   username: 'CameronCodesStuff',
-token: process.env.GITHUB_TOKEN,
+  token: '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',
   refreshInterval: 60,
   repoLimit: 30,
   commitFetchLimit: 12,
