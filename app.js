@@ -1,6 +1,6 @@
 const CONFIG = {
   username: 'CameronCodesStuff',
-  token: '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',
+  token: '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',
   refreshInterval: 60,
   repoLimit: 30,
   commitFetchLimit: 12,
