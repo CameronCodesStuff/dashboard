@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CameronCodesStuff — Dev Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <canvas id="bg-canvas"></canvas>
+  <div class="scanlines"></div>
+
+  <div id="token-screen" class="token-screen">
+    <div class="token-box">
+      <div class="token-eye">// setup</div>
+      <h2 class="token-title">GitHub Token</h2>
+      <p class="token-desc">Paste your personal access token to unlock the dashboard. It stays in your browser and is never sent anywhere except GitHub's API.</p>
+      <div class="token-input-row">
+        <input id="token-input" type="password" placeholder="ghp_..." spellcheck="false" autocomplete="off" />
+        <button id="token-toggle" class="icon-btn" title="Show/hide token">
+          <svg id="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+      <div class="token-actions">
+        <button id="token-submit" class="primary-btn">Launch Dashboard</button>
+        <button id="token-skip" class="ghost-btn">Skip (60 req/hr limit)</button>
+      </div>
+      <p class="token-hint">Generate one at GitHub → Settings → Developer settings → Personal access tokens. <code>public_repo</code> read scope is enough.</p>
+    </div>
+  </div>
+
+  <div id="dashboard" class="layout" style="display:none">
+
+    <header class="hero">
+      <div class="hero-left">
+        <div class="avatar-wrap">
+          <img id="avatar" src="" alt="Avatar" />
+          <span class="avatar-ring"></span>
+        </div>
+        <div class="hero-info">
+          <div class="eyebrow">// active dev</div>
+          <h1 id="display-name">CameronCodesStuff</h1>
+          <p id="bio" class="bio"></p>
+          <a href="https://github.com/CameronCodesStuff" target="_blank" class="gh-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+            github.com/CameronCodesStuff
+          </a>
+        </div>
+      </div>
+      <div class="refresh-zone">
+        <button class="refresh-btn" onclick="window.dashboard.refresh()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          Refresh
+        </button>
+        <button class="ghost-btn-sm" onclick="window.dashboard.resetToken()">Change token</button>
+        <div class="tick-wrap">
+          <svg class="tick-ring" viewBox="0 0 36 36">
+            <circle cx="18" cy="18" r="15" fill="none" stroke-width="2" stroke="rgba(255,255,255,.05)"/>
+            <circle cx="18" cy="18" r="15" fill="none" stroke-width="2" stroke="#2dd4bf" stroke-dasharray="94.25" stroke-dashoffset="0" stroke-linecap="round" id="tick-circle" style="transform:rotate(-90deg);transform-origin:center;transition:stroke-dashoffset 1s linear"/>
+          </svg>
+          <span id="tick-label" class="tick-label">60s</span>
+        </div>
+        <div class="status-pill">
+          <span class="status-dot" id="status-dot"></span>
+          <span id="status-txt">loading</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="stats-grid">
+      <div class="stat-card"><div class="stat-num" id="s-repos">—</div><div class="stat-label">repos</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-stars">—</div><div class="stat-label">stars</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-followers">—</div><div class="stat-label">followers</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-streak">—</div><div class="stat-label">day streak</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-today">—</div><div class="stat-label">pushed today</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-langs">—</div><div class="stat-label">languages</div></div>
+    </section>
+
+    <section class="badges-section">
+      <img src="https://github-readme-activity-graph.vercel.app/graph?username=CameronCodesStuff&theme=react-dark&hide_border=true&area=true&custom_title=Contribution+Flow&bg_color=080c14&color=2dd4bf&line=a78bfa&point=60a5fa" alt="Activity graph" class="badge-img badge-wide" />
+      <div class="badges-row">
+        <img src="https://github-readme-stats.vercel.app/api?username=CameronCodesStuff&show_icons=true&theme=react&hide_border=true&bg_color=080c14&title_color=2dd4bf&icon_color=a78bfa&text_color=94a3b8&ring_color=2dd4bf" alt="GitHub stats" class="badge-img" />
+        <img src="https://github-readme-streak-stats.herokuapp.com?user=CameronCodesStuff&theme=react&hide_border=true&background=080c14&ring=2dd4bf&fire=fb923c&currStreakLabel=2dd4bf&sideLabels=94a3b8&dates=475569&currStreakNum=ffffff&sideNums=ffffff" alt="Streak stats" class="badge-img" />
+      </div>
+    </section>
+
+    <div class="section-label">
+      <span class="section-tag">// repositories</span>
+      <span class="section-count" id="repo-count"></span>
+    </div>
+
+    <div class="lang-filter" id="lang-filter"></div>
+
+    <main class="repo-grid" id="repo-grid">
+      <div class="skeleton-grid">
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+      </div>
+    </main>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
