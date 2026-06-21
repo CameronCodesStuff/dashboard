@@ -1,6 +1,6 @@
 const CONFIG = {
   username: 'CameronCodesStuff',
-  token: 'YOUR_GITHUB_TOKEN_HERE',
+token: process.env.GITHUB_TOKEN,
   refreshInterval: 60,
   repoLimit: 30,
   commitFetchLimit: 12,
