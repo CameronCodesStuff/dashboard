@@ -1,6 +1,6 @@
 const CONFIG = {
   username: 'CameronCodesStuff',
-  worker: 'https://YOUR_WORKER_NAME.YOUR_SUBDOMAIN.workers.dev',
+  worker: 'https://dashboard.detlaffcameron.workers.dev',
   refreshInterval: 60,
   repoLimit: 30,
   commitFetchLimit: 12,
